@@ -1,0 +1,38 @@
+.study-planner-page {
+  padding: 1.5rem;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-item {
+  transition: 0.2s ease;
+}
+
+.task-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.task-completed {
+  opacity: 0.65;
+}
+
+.empty-icon {
+  font-size: 3rem;
+}
+
+@media (max-width: 768px) {
+
+  .study-planner-page {
+    padding: 1rem;
+  }
+
+  .page-header {
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+}

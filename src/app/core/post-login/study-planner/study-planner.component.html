@@ -1,0 +1,433 @@
+<div class="study-planner-page">
+
+  <!-- Header -->
+
+  <div class="page-header mb-4">
+
+    <div>
+
+      <h2 class="fw-bold mb-1">
+        Study Planner
+      </h2>
+
+      <p class="text-muted mb-0">
+        Plan your studies and stay on track.
+      </p>
+
+    </div>
+
+    @if (!isAddMode) {
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="openAddTask()"
+      >
+        + Add Task
+      </button>
+
+    }
+
+  </div>
+
+
+  <!-- Add Task Form -->
+
+  @if (isAddMode) {
+
+    <div class="card border-0 shadow-sm mb-4">
+
+      <div class="card-body p-4">
+
+        <h5 class="fw-bold mb-4">
+          Add Study Task
+        </h5>
+
+
+        <form [formGroup]="studyForm">
+
+          <div class="row g-3">
+
+            <!-- Title -->
+
+            <div class="col-md-6">
+
+              <label class="form-label fw-semibold">
+                Task Title
+                <span class="text-danger">*</span>
+              </label>
+
+              <input
+                type="text"
+                class="form-control"
+                formControlName="title"
+                placeholder="e.g. Learn Angular Interceptors"
+              />
+
+              @if (
+                getControl('title')?.invalid &&
+                getControl('title')?.touched
+              ) {
+
+                <div class="text-danger small mt-1">
+
+                  @if (getControl('title')?.hasError('required')) {
+                    Task title is required.
+                  }
+
+                  @if (getControl('title')?.hasError('minlength')) {
+                    Minimum 3 characters required.
+                  }
+
+                </div>
+
+              }
+
+            </div>
+
+
+            <!-- Subject -->
+
+            <div class="col-md-6">
+
+              <label class="form-label fw-semibold">
+                Subject
+                <span class="text-danger">*</span>
+              </label>
+
+              <select
+                class="form-select"
+                formControlName="subject"
+              >
+
+                <option value="">
+                  Select Subject
+                </option>
+
+                <option value="Angular">
+                  Angular
+                </option>
+
+                <option value="JavaScript">
+                  JavaScript
+                </option>
+
+                <option value="TypeScript">
+                  TypeScript
+                </option>
+
+                <option value="Java">
+                  Java
+                </option>
+
+                <option value="SQL">
+                  SQL
+                </option>
+
+                <option value="Other">
+                  Other
+                </option>
+
+              </select>
+
+              @if (
+                getControl('subject')?.hasError('required') &&
+                getControl('subject')?.touched
+              ) {
+
+                <div class="text-danger small mt-1">
+                  Please select a subject.
+                </div>
+
+              }
+
+            </div>
+
+
+            <!-- Due Date -->
+
+            <div class="col-md-6">
+
+              <label class="form-label fw-semibold">
+                Due Date
+                <span class="text-danger">*</span>
+              </label>
+
+              <input
+                type="date"
+                class="form-control"
+                formControlName="dueDate"
+              />
+
+              @if (
+                getControl('dueDate')?.hasError('required') &&
+                getControl('dueDate')?.touched
+              ) {
+
+                <div class="text-danger small mt-1">
+                  Due date is required.
+                </div>
+
+              }
+
+            </div>
+
+
+            <!-- Priority -->
+
+            <div class="col-md-6">
+
+              <label class="form-label fw-semibold">
+                Priority
+              </label>
+
+              <select
+                class="form-select"
+                formControlName="priority"
+              >
+
+                <option value="Low">
+                  Low
+                </option>
+
+                <option value="Medium">
+                  Medium
+                </option>
+
+                <option value="High">
+                  High
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <!-- Description -->
+
+            <div class="col-12">
+
+              <label class="form-label fw-semibold">
+                Description
+              </label>
+
+              <textarea
+                class="form-control"
+                formControlName="description"
+                rows="3"
+                placeholder="Add some details about this task..."
+              ></textarea>
+
+            </div>
+
+          </div>
+
+
+          <!-- Buttons -->
+
+          <div class="d-flex justify-content-end gap-2 mt-4">
+
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              (click)="cancelAdd()"
+              [disabled]="isLoading"
+            >
+              Cancel
+            </button>
+
+
+            @if (!isLoading) {
+
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="saveTask()"
+              >
+                Add Task
+              </button>
+
+            } @else {
+
+              <button
+                type="button"
+                class="btn btn-primary"
+                disabled
+              >
+
+                <span
+                  class="spinner-border spinner-border-sm me-2"
+                ></span>
+
+                Saving...
+
+              </button>
+
+            }
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  }
+
+
+  <!-- Task List -->
+
+  <div class="card border-0 shadow-sm">
+
+    <div class="card-body p-4">
+
+      <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+          <h5 class="fw-bold mb-1">
+            My Tasks
+          </h5>
+
+          <small class="text-muted">
+            {{ tasks.length }} task(s)
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <!-- No Tasks -->
+
+      @if (tasks.length === 0) {
+
+        <div class="empty-state text-center py-5">
+
+          <div class="empty-icon mb-3">
+            📚
+          </div>
+
+          <h5 class="fw-semibold">
+            No study tasks yet
+          </h5>
+
+          <p class="text-muted">
+            Start planning your studies by adding your first task.
+          </p>
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="openAddTask()"
+          >
+            Add Your First Task
+          </button>
+
+        </div>
+
+      }
+
+
+      <!-- Tasks -->
+
+      @for (task of tasks; track task.id) {
+
+        <div
+          class="task-item border rounded p-3 mb-3"
+          [class.task-completed]="task.completed"
+        >
+
+          <div class="d-flex align-items-start gap-3">
+
+            <!-- Checkbox -->
+
+            <div class="pt-1">
+
+              <input
+                type="checkbox"
+                class="form-check-input"
+                [checked]="task.completed"
+                (change)="toggleTask(task)"
+              />
+
+            </div>
+
+
+            <!-- Task Content -->
+
+            <div class="flex-grow-1">
+
+              <div class="d-flex justify-content-between">
+
+                <div>
+
+                  <h6
+                    class="fw-bold mb-1"
+                    [class.text-decoration-line-through]="task.completed"
+                  >
+                    {{ task.title }}
+                  </h6>
+
+                  <span class="badge bg-light text-dark">
+                    {{ task.subject }}
+                  </span>
+
+                </div>
+
+
+                <!-- Priority -->
+
+                <span
+                  class="badge"
+                  [class.bg-danger]="task.priority === 'High'"
+                  [class.bg-warning]="task.priority === 'Medium'"
+                  [class.bg-success]="task.priority === 'Low'"
+                >
+                  {{ task.priority }}
+                </span>
+
+              </div>
+
+
+              @if (task.description) {
+
+                <p class="text-muted small mt-2 mb-2">
+                  {{ task.description }}
+                </p>
+
+              }
+
+
+              <div class="small text-muted">
+
+                📅 Due:
+                {{ task.dueDate }}
+
+              </div>
+
+            </div>
+
+
+            <!-- Delete -->
+
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger"
+              (click)="deleteTask(task.id)"
+            >
+              Delete
+            </button>
+
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+  </div>
+
+</div>

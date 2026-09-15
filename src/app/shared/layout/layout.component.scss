@@ -1,0 +1,11 @@
+.app-container {
+  display: flex;
+  min-height: calc(100vh - 65px);
+}
+
+.main-content {
+  flex: 1;
+  padding: 24px;
+  background: #f5f7fa;
+  overflow-x: hidden;
+}

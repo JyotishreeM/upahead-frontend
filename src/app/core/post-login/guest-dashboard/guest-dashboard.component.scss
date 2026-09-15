@@ -1,0 +1,156 @@
+
+.dashboard {
+  max-width: 1400px;
+  margin: auto;
+}
+
+.welcome-section {
+  margin-bottom: 10px;
+}
+
+
+// Summary cards
+
+.summary-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 22px;
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  transition: transform 0.2s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-3px);
+}
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #f1f5f9;
+
+  font-size: 23px;
+}
+
+
+// Main cards
+
+.dashboard-card {
+  border-radius: 12px;
+}
+
+
+// Assignments
+
+.assignment-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 16px 0;
+
+  border-bottom: 1px solid #eef0f2;
+}
+
+.assignment-item:last-child {
+  border-bottom: none;
+}
+
+
+// Classes
+
+.class-item {
+  display: flex;
+  align-items: center;
+
+  gap: 16px;
+
+  padding: 15px 0;
+
+  border-bottom: 1px solid #eef0f2;
+}
+
+.class-item:last-child {
+  border-bottom: none;
+}
+
+.class-time {
+  min-width: 80px;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.class-details {
+  flex: 1;
+}
+
+
+// Attendance
+
+.attendance-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.attendance-circle {
+  width: 140px;
+  height: 140px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #eef2ff;
+
+  border: 12px solid #dbe4ff;
+}
+
+.attendance-circle span {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+
+// Quick actions
+
+.quick-action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 16px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+
+  text-decoration: none;
+
+  color: #374151;
+
+  transition: all 0.2s ease;
+}
+
+.quick-action:hover {
+  background: #f8fafc;
+  transform: translateY(-2px);
+}
+
+.quick-action:first-letter {
+  font-size: 20px;
+}

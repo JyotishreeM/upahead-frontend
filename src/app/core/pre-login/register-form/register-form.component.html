@@ -1,0 +1,261 @@
+<div class="registration-page">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-8">
+        <div class="card registration-card shadow border-0">
+          <!-- Header -->
+          <div class="card-body p-4 p-md-5">
+            <div class="text-center mb-4">
+              <h2 class="fw-bold mb-2">Create your account</h2>
+
+              <p class="text-muted mb-0">Register as a guest to get started</p>
+            </div>
+
+            <!-- Registration Form -->
+            <form [formGroup]="customerForm" (ngSubmit)="onSave()">
+              <div class="row g-3">
+                @for (item of formFields; track item.name) {
+                  @if (!item.isHidden) {
+                    <div [class]="item.width">
+                      <!-- TEXT / NUMBER / EMAIL / SELECT / TEXTAREA -->
+                      @switch (item.type) {
+                        <!-- TEXT -->
+                        @case ("text") {
+                          <label
+                            [for]="item.name"
+                            class="form-label fw-semibold"
+                          >
+                            {{ item.label }}
+
+                            @if (getControl(item.name)?.hasError("required")) {
+                              <span class="text-danger">*</span>
+                            }
+                          </label>
+
+                          <input
+                            [id]="item.name"
+                            type="text"
+                            [formControlName]="item.name"
+                            [placeholder]="item.placeholder"
+                            class="form-control form-control-lg"
+                          />
+                        }
+
+                        <!-- NUMBER -->
+                        @case ("number") {
+                          <label
+                            [for]="item.name"
+                            class="form-label fw-semibold"
+                          >
+                            {{ item.label }}
+
+                            @if (getControl(item.name)?.hasError("required")) {
+                              <span class="text-danger">*</span>
+                            }
+                          </label>
+
+                          <input
+                            [id]="item.name"
+                            type="number"
+                            [formControlName]="item.name"
+                            [placeholder]="item.placeholder"
+                            class="form-control form-control-lg"
+                          />
+                        }
+
+                        <!-- EMAIL -->
+                        @case ("email") {
+                          <label
+                            [for]="item.name"
+                            class="form-label fw-semibold"
+                          >
+                            {{ item.label }}
+
+                            @if (getControl(item.name)?.hasError("required")) {
+                              <span class="text-danger">*</span>
+                            }
+                          </label>
+
+                          <input
+                            [id]="item.name"
+                            type="email"
+                            [formControlName]="item.name"
+                            [placeholder]="item.placeholder"
+                            class="form-control form-control-lg"
+                          />
+                        }
+
+                        @case ("password") {
+                          <label
+                            [for]="item.name"
+                            class="form-label fw-semibold"
+                          >
+                            {{ item.label }}
+
+                            @if (getControl(item.name)?.hasError("required")) {
+                              <span class="text-danger">*</span>
+                            }
+                          </label>
+
+                          <input
+                            [id]="item.name"
+                            type="password"
+                            [formControlName]="item.name"
+                            [placeholder]="item.placeholder"
+                            class="form-control form-control-lg"
+                          />
+                        }
+                        <!-- SELECT -->
+                        @case ("select") {
+                          <label
+                            [for]="item.name"
+                            class="form-label fw-semibold"
+                          >
+                            {{ item.label }}
+
+                            @if (getControl(item.name)?.hasError("required")) {
+                              <span class="text-danger">*</span>
+                            }
+                          </label>
+
+                          <select
+                            [id]="item.name"
+                            [formControlName]="item.name"
+                            class="form-select form-select-lg"
+                          >
+                            <option value="" disabled>
+                              {{ item.placeholder }}
+                            </option>
+
+                            @for (option of item.option; track option) {
+                              <option [value]="option">
+                                {{ option }}
+                              </option>
+                            }
+                          </select>
+                        }
+
+                        <!-- TEXTAREA -->
+                        @case ("textarea") {
+                          <label
+                            [for]="item.name"
+                            class="form-label fw-semibold"
+                          >
+                            {{ item.label }}
+
+                            @if (getControl(item.name)?.hasError("required")) {
+                              <span class="text-danger">*</span>
+                            }
+                          </label>
+
+                          <textarea
+                            [id]="item.name"
+                            [formControlName]="item.name"
+                            [placeholder]="item.placeholder"
+                            class="form-control"
+                            rows="3"
+                          ></textarea>
+                        }
+
+                        <!-- CHECKBOX -->
+                        @case ("checkbox") {
+                          <div class="form-check mt-4">
+                            <input
+                              [id]="item.name"
+                              type="checkbox"
+                              [formControlName]="item.name"
+                              class="form-check-input"
+                            />
+
+                            <label
+                              [for]="item.name"
+                              class="form-check-label fw-semibold"
+                            >
+                              {{ item.label }}
+                            </label>
+                          </div>
+                        }
+                      }
+
+                      <!-- Validation Messages -->
+                      @if (
+                        getControl(item.name)?.invalid &&
+                        (getControl(item.name)?.touched ||
+                          getControl(item.name)?.dirty)
+                      ) {
+                        <div class="text-danger small mt-1">
+                          @if (getControl(item.name)?.errors?.["required"]) {
+                            {{ item.label }} is required.
+                          }
+
+                          @if (getControl(item.name)?.errors?.["minlength"]) {
+                            Minimum
+                            {{
+                              getControl(item.name)?.errors?.["minlength"]
+                                ?.requiredLength
+                            }}
+                            characters required.
+                          }
+
+                          @if (getControl(item.name)?.errors?.["email"]) {
+                            Please enter a valid email address.
+                          }
+
+                          @if (
+                            getControl(item.name)?.errors?.["invalidEmail"]
+                          ) {
+                            Please enter a valid email address.
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+                }
+              </div>
+
+              <!-- Register Button -->
+              <div class="d-grid mt-4">
+                <button
+                  *ngIf="!isLoading"
+                  type="submit"
+                  class="btn btn-primary btn-lg"
+                  [disabled]="customerForm.invalid"
+                >
+                  Create Account
+                </button>
+
+                <!-- Loading button -->
+                <button
+                  *ngIf="isLoading"
+                  type="button"
+                  class="btn btn-primary btn-lg"
+                  disabled
+                >
+                  <span
+                    class="spinner-border spinner-border-sm me-2"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+
+                  Please Wait...
+                </button>
+              </div>
+            </form>
+
+            <!-- Login Link -->
+            <div class="text-center mt-4">
+              <span class="text-muted"> Already have an account? </span>
+
+              <a
+                routerLink="/login"
+                class="ms-1 text-decoration-none fw-semibold"
+              >
+                Login
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

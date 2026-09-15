@@ -1,0 +1,729 @@
+<div class="profile-page">
+
+  <!-- ================= PAGE HEADER ================= -->
+
+  <div class="mb-4">
+
+    <h2 class="fw-bold mb-1">
+      My Profile
+    </h2>
+
+    <p class="text-muted mb-0">
+      Manage your personal information and account security
+    </p>
+
+  </div>
+
+
+  <div class="row g-4">
+
+    <!-- ================= PROFILE SUMMARY ================= -->
+
+    <div class="col-12 col-lg-4">
+
+      <div class="card profile-card border-0 shadow-sm">
+
+        <div class="card-body text-center p-4">
+
+          <!-- Avatar -->
+
+          <div class="profile-avatar">
+
+            {{ user?.userName?.charAt(0)?.toUpperCase() }}
+
+          </div>
+
+
+          <!-- Username -->
+
+          <h4 class="fw-bold mb-1">
+            {{ user?.userName }}
+          </h4>
+
+
+          <!-- Email -->
+
+          <p class="text-muted mb-3">
+            {{ user?.emailId }}
+          </p>
+
+
+          
+
+          @if (user?.isActive) {
+              <!-- Status -->
+            <span class="badge bg-success">
+              Active
+            </span>
+
+          } @else {
+
+            <span class="badge bg-secondary">
+              Inactive
+            </span>
+
+          }
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= PROFILE CONTENT ================= -->
+
+    <div class="col-12 col-lg-8">
+
+      <div class="card profile-card border-0 shadow-sm">
+
+        <div class="card-body p-4">
+
+
+     
+
+          @if (!isEditMode) {
+           <!-- ================================================= -->
+          <!-- VIEW MODE -->
+          <!-- ================================================= -->
+            <div>
+
+              <!-- Header -->
+
+              <div
+                class="d-flex justify-content-between align-items-center mb-4"
+              >
+
+                <div>
+
+                  <h5 class="fw-bold mb-1">
+                    Personal Information
+                  </h5>
+
+                  <small class="text-muted">
+                    Your registered information
+                  </small>
+
+                </div>
+
+
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  (click)="editProfile()"
+                >
+                  Edit Profile
+                </button>
+
+              </div>
+
+
+              <!-- Personal Information -->
+
+              <div class="row g-4">
+
+                <!-- User Name -->
+
+                <div class="col-md-6">
+
+                  <label class="profile-label">
+                    User Name
+                  </label>
+
+                  <div class="profile-value">
+                    {{ user?.userName || '-' }}
+                  </div>
+
+                </div>
+
+
+                <!-- Email -->
+
+                <div class="col-md-6">
+
+                  <label class="profile-label">
+                    Email Address
+                  </label>
+
+                  <div class="profile-value">
+                    {{ user?.emailId || '-' }}
+                  </div>
+
+                </div>
+
+
+                <!-- State -->
+
+                <div class="col-md-6">
+
+                  <label class="profile-label">
+                    State
+                  </label>
+
+                  <div class="profile-value">
+                    {{ user?.state || '-' }}
+                  </div>
+
+                </div>
+
+
+                <!-- City -->
+
+                <div class="col-md-6">
+
+                  <label class="profile-label">
+                    City
+                  </label>
+
+                  <div class="profile-value">
+                    {{ user?.city || '-' }}
+                  </div>
+
+                </div>
+
+
+                <!-- Address -->
+
+                <div class="col-12">
+
+                  <label class="profile-label">
+                    Address
+                  </label>
+
+                  <div class="profile-value">
+                    {{ user?.address || '-' }}
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- ================================================= -->
+              <!-- ACCOUNT SECURITY -->
+              <!-- ================================================= -->
+
+              <div class="border-top mt-4 pt-4">
+
+                <div
+                  class="d-flex justify-content-between align-items-center"
+                >
+
+                  <div>
+
+                    <h5 class="fw-bold mb-1">
+                      Account Security
+                    </h5>
+
+                    <small class="text-muted">
+                      Keep your account secure by managing your password.
+                    </small>
+
+                  </div>
+
+
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary"
+                    (click)="showChangePassword = true"
+                  >
+                    Change Password
+                  </button>
+
+                </div>
+
+              </div>
+
+
+              <!-- ================================================= -->
+              <!-- CHANGE PASSWORD -->
+              <!-- ================================================= -->
+
+              @if (showChangePassword) {
+
+                <div class="border-top mt-4 pt-4">
+
+                  <div class="mb-4">
+
+                    <h5 class="fw-bold mb-1">
+                      Change Password
+                    </h5>
+
+                    <small class="text-muted">
+                      Enter your current password and choose a new password.
+                    </small>
+
+                  </div>
+
+
+                  <form [formGroup]="passwordForm">
+
+                    <div class="row g-3">
+
+                      <!-- Current Password -->
+
+                      <div class="col-12">
+
+                        <label class="form-label fw-semibold">
+                          Current Password
+                          <span class="text-danger">*</span>
+                        </label>
+
+                        <input
+                          type="password"
+                          formControlName="currentPassword"
+                          class="form-control"
+                          placeholder="Enter current password"
+                        />
+
+
+                        @if (
+                          passwordControl('currentPassword')?.invalid &&
+                          passwordControl('currentPassword')?.touched
+                        ) {
+
+                          <div class="text-danger small mt-1">
+
+                            @if (
+                              passwordControl('currentPassword')
+                                ?.hasError('required')
+                            ) {
+
+                              Current password is required.
+
+                            }
+
+                          </div>
+
+                        }
+
+                      </div>
+
+
+                      <!-- New Password -->
+
+                      <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                          New Password
+                          <span class="text-danger">*</span>
+                        </label>
+
+                        <input
+                          type="password"
+                          formControlName="newPassword"
+                          class="form-control"
+                          placeholder="Enter new password"
+                        />
+
+
+                        @if (
+                          passwordControl('newPassword')?.invalid &&
+                          passwordControl('newPassword')?.touched
+                        ) {
+
+                          <div class="text-danger small mt-1">
+
+                            @if (
+                              passwordControl('newPassword')
+                                ?.hasError('required')
+                            ) {
+
+                              New password is required.
+
+                            }
+
+                            @if (
+                              passwordControl('newPassword')
+                                ?.hasError('minlength')
+                            ) {
+
+                              Password must be at least 6 characters.
+
+                            }
+
+                          </div>
+
+                        }
+
+                      </div>
+
+
+                      <!-- Confirm Password -->
+
+                      <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                          Confirm Password
+                          <span class="text-danger">*</span>
+                        </label>
+
+                        <input
+                          type="password"
+                          formControlName="confirmPassword"
+                          class="form-control"
+                          placeholder="Confirm new password"
+                        />
+
+
+                        @if (
+                          passwordControl('confirmPassword')?.touched &&
+                          passwordForm.hasError('passwordMismatch')
+                        ) {
+
+                          <div class="text-danger small mt-1">
+                            Passwords do not match.
+                          </div>
+
+                        }
+
+                      </div>
+
+                    </div>
+
+
+                    <!-- Password Buttons -->
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary"
+                        (click)="cancelChangePassword()"
+                        [disabled]="isPasswordLoading"
+                      >
+                        Cancel
+                      </button>
+
+
+                      @if (!isPasswordLoading) {
+
+                        <button
+                          type="button"
+                          class="btn btn-primary"
+                          (click)="changePassword()"
+                          [disabled]="passwordForm.invalid"
+                        >
+                          Update Password
+                        </button>
+
+                      } @else {
+
+                        <button
+                          type="button"
+                          class="btn btn-primary"
+                          disabled
+                        >
+
+                          <span
+                            class="spinner-border spinner-border-sm me-2"
+                          ></span>
+
+                          Updating...
+
+                        </button>
+
+                      }
+
+                    </div>
+
+                  </form>
+
+                </div>
+
+              }
+
+            </div>
+
+          }
+
+
+       
+
+          @else {
+            
+          <!-- ================================================= -->
+          <!-- EDIT PROFILE MODE -->
+          <!-- ================================================= -->
+            <form [formGroup]="profileForm">
+
+              <div class="mb-4">
+
+                <h5 class="fw-bold mb-1">
+                  Edit Profile
+                </h5>
+
+                <small class="text-muted">
+                  Update your personal information
+                </small>
+
+              </div>
+
+
+              <div class="row g-3">
+
+
+                <!-- USER NAME -->
+
+                <div class="col-md-6">
+
+                  <label class="form-label fw-semibold">
+                    User Name
+                    <span class="text-danger">*</span>
+                  </label>
+
+                  <input
+                    type="text"
+                    formControlName="userName"
+                    class="form-control"
+                    placeholder="Enter user name"
+                  />
+
+
+                  @if (
+                    getControl('userName')?.invalid &&
+                    getControl('userName')?.touched
+                  ) {
+
+                    <div class="text-danger small mt-1">
+
+                      @if (
+                        getControl('userName')?.hasError('required')
+                      ) {
+                        User Name is required.
+                      }
+
+                      @if (
+                        getControl('userName')?.hasError('minlength')
+                      ) {
+                        Minimum 3 characters required.
+                      }
+
+                      @if (
+                        getControl('userName')?.hasError('onlyAlphabets')
+                      ) {
+                        User Name should contain only alphabets.
+                      }
+
+                    </div>
+
+                  }
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="col-md-6">
+
+                  <label class="form-label fw-semibold">
+                    Email Address
+                    <span class="text-danger">*</span>
+                  </label>
+
+                  <input
+                    type="email"
+                    formControlName="emailId"
+                    class="form-control"
+                    placeholder="Enter email address"
+                  />
+
+
+                  @if (
+                    getControl('emailId')?.invalid &&
+                    getControl('emailId')?.touched
+                  ) {
+
+                    <div class="text-danger small mt-1">
+
+                      @if (
+                        getControl('emailId')?.hasError('required')
+                      ) {
+                        Email is required.
+                      }
+
+                      @if (
+                        getControl('emailId')?.hasError('invalidEmail')
+                      ) {
+                        Please enter a valid email address.
+                      }
+
+                    </div>
+
+                  }
+
+                </div>
+
+
+                <!-- STATE -->
+
+                <div class="col-md-6">
+
+                  <label class="form-label fw-semibold">
+                    State
+                    <span class="text-danger">*</span>
+                  </label>
+
+                  <select
+                    formControlName="state"
+                    class="form-select"
+                  >
+
+                    <option value="">
+                      Select State
+                    </option>
+
+                    <option value="Pune">
+                      Pune
+                    </option>
+
+                    <option value="Nagpur">
+                      Nagpur
+                    </option>
+
+                    <option value="Mumbai">
+                      Mumbai
+                    </option>
+
+                  </select>
+
+
+                  @if (
+                    getControl('state')?.hasError('required') &&
+                    getControl('state')?.touched
+                  ) {
+
+                    <div class="text-danger small mt-1">
+                      State is required.
+                    </div>
+
+                  }
+
+                </div>
+
+
+                <!-- CITY -->
+
+                <div class="col-md-6">
+
+                  <label class="form-label fw-semibold">
+                    City
+                    <span class="text-danger">*</span>
+                  </label>
+
+                  <select
+                    formControlName="city"
+                    class="form-select"
+                  >
+
+                    <option value="">
+                      Select City
+                    </option>
+
+                    <option value="Maharastra">
+                      Maharastra
+                    </option>
+
+                    <option value="Karnataka">
+                      Karnataka
+                    </option>
+
+                    <option value="Goa">
+                      Goa
+                    </option>
+
+                  </select>
+
+
+                  @if (
+                    getControl('city')?.hasError('required') &&
+                    getControl('city')?.touched
+                  ) {
+
+                    <div class="text-danger small mt-1">
+                      City is required.
+                    </div>
+
+                  }
+
+                </div>
+
+
+                <!-- ADDRESS -->
+
+                <div class="col-12">
+
+                  <label class="form-label fw-semibold">
+                    Address
+                  </label>
+
+                  <textarea
+                    formControlName="address"
+                    class="form-control"
+                    rows="4"
+                    placeholder="Enter your address"
+                  ></textarea>
+
+                </div>
+
+              </div>
+
+
+              <!-- PROFILE BUTTONS -->
+
+              <div class="d-flex justify-content-end gap-2 mt-4">
+
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  (click)="cancelEdit()"
+                  [disabled]="isLoading"
+                >
+                  Cancel
+                </button>
+
+
+                @if (!isLoading) {
+
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="saveProfile()"
+                    [disabled]="profileForm.invalid"
+                  >
+                    Save Changes
+                  </button>
+
+                } @else {
+
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    disabled
+                  >
+
+                    <span
+                      class="spinner-border spinner-border-sm me-2"
+                    ></span>
+
+                    Saving...
+
+                  </button>
+
+                }
+
+              </div>
+
+            </form>
+
+          }
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,363 @@
+<div class="courses-page">
+
+  <!-- Page Header -->
+
+  <div class="page-header mb-4">
+
+    <div>
+
+      <h2 class="fw-bold mb-1">
+        My Courses
+      </h2>
+
+      <p class="text-muted mb-0">
+        Manage your courses and track your learning progress.
+      </p>
+
+    </div>
+
+
+    @if (!isAddMode) {
+
+    <button type="button" class="btn btn-primary" (click)="openAddCourse()">
+      + Add Course
+    </button>
+
+    }
+
+  </div>
+
+
+  <!-- Add Course -->
+
+  @if (isAddMode) {
+
+  <div class="card border-0 shadow-sm mb-4">
+
+    <div class="card-body p-4">
+
+      <h5 class="fw-bold mb-1">
+        @if (isEditMode) {
+        Edit Course
+        } @else {
+        Add New Course
+        }
+      </h5>
+
+      <small class="text-muted">
+        @if (isEditMode) {
+        Update your course information.
+        } @else {
+        Add a course to start tracking your learning.
+        }
+      </small>
+
+
+      <form [formGroup]="courseForm">
+
+        <div class="row g-3">
+
+          <!-- Course Name -->
+
+          <div class="col-md-6">
+
+            <label class="form-label fw-semibold">
+              Course Name
+              <span class="text-danger">*</span>
+            </label>
+
+            <input type="text" class="form-control" formControlName="name" placeholder="e.g. Angular" />
+
+
+            @if (
+            getControl('name')?.invalid &&
+            getControl('name')?.touched
+            ) {
+
+            <div class="text-danger small mt-1">
+
+              @if (getControl('name')?.hasError('required')) {
+              Course name is required.
+              }
+
+              @if (getControl('name')?.hasError('minlength')) {
+              Minimum 3 characters required.
+              }
+
+            </div>
+
+            }
+
+          </div>
+
+
+          <!-- Category -->
+
+          <div class="col-md-6">
+
+            <label class="form-label fw-semibold">
+              Category
+              <span class="text-danger">*</span>
+            </label>
+
+            <select class="form-select" formControlName="category">
+
+              <option value="">
+                Select Category
+              </option>
+
+              <option value="Programming">
+                Programming
+              </option>
+
+              <option value="Database">
+                Database
+              </option>
+
+              <option value="Frontend">
+                Frontend
+              </option>
+
+              <option value="Backend">
+                Backend
+              </option>
+
+              <option value="Other">
+                Other
+              </option>
+
+            </select>
+
+
+            @if (
+            getControl('category')?.hasError('required') &&
+            getControl('category')?.touched
+            ) {
+
+            <div class="text-danger small mt-1">
+              Please select a category.
+            </div>
+
+            }
+
+          </div>
+
+
+          <!-- Description -->
+
+          <div class="col-12">
+
+            <label class="form-label fw-semibold">
+              Description
+            </label>
+
+            <textarea class="form-control" formControlName="description" rows="3"
+              placeholder="Describe the course..."></textarea>
+
+          </div>
+
+        </div>
+
+
+        <!-- Buttons -->
+
+        <div class="d-flex justify-content-end gap-2 mt-4">
+
+          <button type="button" class="btn btn-outline-secondary" (click)="cancelForm()" [disabled]="isLoading">
+            Cancel
+          </button>
+
+
+          @if (!isLoading) {
+
+          <button type="button" class="btn btn-primary" (click)="saveCourse()" [disabled]="courseForm.invalid">
+            @if (isEditMode) {
+              Update Course
+            } @else {
+              Add Course
+            }
+          </button>
+
+          } @else {
+
+          <button type="button" class="btn btn-primary" disabled>
+
+            <span class="spinner-border spinner-border-sm me-2"></span>
+
+            Saving...
+
+          </button>
+
+          }
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+  }
+
+
+  <!-- Course List -->
+
+  <div class="row g-4">
+
+    @if (courses.length === 0) {
+
+    <div class="col-12">
+
+      <div class="card border-0 shadow-sm">
+
+        <div class="card-body text-center py-5">
+
+          <div class="fs-1 mb-3">
+            🎓
+          </div>
+
+          <h5 class="fw-bold">
+            No courses yet
+          </h5>
+
+          <p class="text-muted">
+            Add your first course to start tracking your learning.
+          </p>
+
+          <button type="button" class="btn btn-primary" (click)="openAddCourse()">
+            Add Your First Course
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    }
+
+    @for (course of courses; track course.id) {
+
+    <div class="col-12 col-md-6 col-xl-4">
+
+      <div class="card course-card border-0 shadow-sm h-100" [class.course-completed]="course.completed">
+
+        <div class="card-body p-4">
+
+          <!-- Top -->
+
+          <div class="d-flex justify-content-between align-items-start">
+
+            <div class="course-icon">
+              🎓
+            </div>
+
+            <div class="d-flex gap-2 align-items-center">
+
+              <span class="badge bg-light text-dark">
+                {{ course.category }}
+              </span>
+
+              @if (course.completed) {
+
+              <span class="badge bg-success">
+                Completed
+              </span>
+
+              }
+
+            </div>
+
+          </div>
+
+
+          <!-- Course Name -->
+
+          <h5 class="fw-bold mt-3 mb-2" [class.text-decoration-line-through]="course.completed">
+            {{ course.name }}
+          </h5>
+
+
+          <!-- Description -->
+
+          @if (course.description) {
+
+          <p class="text-muted small mb-3">
+            {{ course.description }}
+          </p>
+
+          }
+
+
+          <!-- Progress -->
+
+          <div class="d-flex justify-content-between mb-1">
+
+            <small class="text-muted">
+              Progress
+            </small>
+
+            <small class="fw-semibold">
+              {{ course.progress }}%
+            </small>
+
+          </div>
+
+
+          <div class="progress mb-3">
+
+            <div class="progress-bar" role="progressbar" [style.width.%]="course.progress"></div>
+
+          </div>
+
+
+          <!-- Progress Slider -->
+
+          <label class="form-label small text-muted">
+            Update Progress
+          </label>
+
+          <input type="range" class="form-range" min="0" max="100" [value]="course.progress"
+            (input)="updateProgress(course, $event)" />
+
+
+          <!-- Completed -->
+
+          <div class="form-check mt-2 mb-3">
+
+            <input class="form-check-input" type="checkbox" [checked]="course.completed"
+              (change)="toggleCompleted(course)" [id]="'completed-' + course.id" />
+
+            <label class="form-check-label" [for]="'completed-' + course.id">
+              Mark as completed
+            </label>
+
+          </div>
+
+
+          <!-- Actions -->
+
+          <div class="d-flex gap-2">
+
+            <button type="button" class="btn btn-outline-primary btn-sm flex-grow-1" (click)="editCourse(course)">
+              Edit
+            </button>
+
+            <button type="button" class="btn btn-outline-danger btn-sm" (click)="deleteCourse(course.id)">
+              Delete
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    }
+
+  </div>
+
+</div>
