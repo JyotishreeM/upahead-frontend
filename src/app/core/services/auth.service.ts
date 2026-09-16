@@ -2,6 +2,7 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import{environment} from '../../../environments/environment';
 
 
 export interface RegisteredUser {
@@ -32,7 +33,7 @@ export class AuthServiceService {
 
   private readonly USER_KEY = 'registeredUser';
   private readonly TOKEN_KEY = 'accessToken';
-  private readonly API_URL = 'http://localhost:8080/api/auth';
+ private readonly API_URL = `${environment.apiUrl}/api/auth`;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
@@ -120,9 +121,9 @@ export class AuthServiceService {
 }
 
 
-  testProtectedApi() {
+ testProtectedApi() {
   return this.http.get(
-    'http://localhost:8080/api/test/protected',
+    `${environment.apiUrl}/api/test/protected`,
     {
       responseType: 'text'
     }
