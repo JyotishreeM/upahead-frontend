@@ -29,8 +29,8 @@ export class CoursesComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-      private courseService: CoarseService
-  ) {}
+    private courseService: CoarseService
+  ) { }
 
   ngOnInit(): void {
     this.buildForm();
@@ -62,7 +62,7 @@ export class CoursesComponent implements OnInit {
 
   }
 
-  loadCourse(){
+  loadCourse() {
     this.courses = this.courseService.getCourses();
   }
 
@@ -130,99 +130,62 @@ export class CoursesComponent implements OnInit {
   // SAVE COURSE
   // =========================
 
- 
+
   saveCourse(): void {
-
-  if (this.courseForm.invalid) {
-
-    this.courseForm.markAllAsTouched();
-
-    return;
-
-  }
-
-  this.isLoading = true;
-
-  if (
-    this.isEditMode &&
-    this.editingCourseId !== null
-  ) {
-
-    const existingCourse = this.courses.find(
-      course => course.id === this.editingCourseId
-    );
-
-    if (existingCourse) {
-
-      const updatedCourse: Course = {
-
-        ...existingCourse,
-
-        name: this.courseForm.value.name,
-
-        category: this.courseForm.value.category,
-
-        description: this.courseForm.value.description
-
-      };
-
-      this.courseService.updateCourse(updatedCourse);
-
+    if (this.courseForm.invalid) {
+      this.courseForm.markAllAsTouched();
+      return;
     }
+    this.isLoading = true;
+    if (
+      this.isEditMode &&
+      this.editingCourseId !== null
+    ) {
+      const existingCourse = this.courses.find(
+        course => course.id === this.editingCourseId
+      );
 
-  } else {
+      if (existingCourse) {
+        const updatedCourse: Course = {
+          ...existingCourse,
+          name: this.courseForm.value.name,
+          category: this.courseForm.value.category,
+          description: this.courseForm.value.description
+        };
 
-    const newCourse: Course = {
-
-      id: Date.now(),
-
-      name: this.courseForm.value.name,
-
-      category: this.courseForm.value.category,
-
-      description: this.courseForm.value.description,
-
-      progress: 0,
-
-      completed: false
-
-    };
-
-    this.courseService.addCourse(newCourse);
-
+        this.courseService.updateCourse(updatedCourse);
+      }
+    } else {
+      const newCourse: Course = {
+        id: Date.now(),
+        name: this.courseForm.value.name,
+        category: this.courseForm.value.category,
+        description: this.courseForm.value.description,
+        progress: 0,
+        completed: false
+      };
+      this.courseService.addCourse(newCourse);
+    }
+    setTimeout(() => {
+      this.loadCourse();
+      this.isLoading = false;
+      this.cancelForm();
+    }, 500);
   }
-
-
-  setTimeout(() => {
-
-    this.loadCourse();
-
-    this.isLoading = false;
-
-    this.cancelForm();
-
-  }, 500);
-
-}
   // =========================
   // DELETE COURSE
   // =========================
 
- deleteCourse(courseId: number): void {
-
-  const confirmed = confirm(
-    'Are you sure you want to delete this course?'
-  );
-
-  if (!confirmed) {
-    return;
+  deleteCourse(courseId: number): void {
+    const confirmed = confirm(
+      'Are you sure you want to delete this course?'
+    );
+    if (!confirmed) {
+      return;
+    }
+    this.courseService.deleteCourse(courseId);
+    this.loadCourse();
   }
-
-  this.courseService.deleteCourse(courseId);
-
-  this.loadCourse();
-
-}
 
 
   // =========================
@@ -230,29 +193,22 @@ export class CoursesComponent implements OnInit {
   // =========================
 
   updateProgress(
-  course: Course,
-  event: Event
-): void {
+    course: Course,
+    event: Event
+  ): void {
+    const input = event.target as HTMLInputElement;
+    let progress = Number(input.value);
+    if (progress < 0) {
+      progress = 0;
+    }
+    if (progress > 100) {
+      progress = 100;
+    }
+    course.progress = progress;
+    course.completed = progress === 100;
+    this.courseService.updateCourse(course);
 
-  const input = event.target as HTMLInputElement;
-
-  let progress = Number(input.value);
-
-  if (progress < 0) {
-    progress = 0;
   }
-
-  if (progress > 100) {
-    progress = 100;
-  }
-
-  course.progress = progress;
-
-  course.completed = progress === 100;
-
-  this.courseService.updateCourse(course);
-
-}
 
 
   // =========================
@@ -260,17 +216,11 @@ export class CoursesComponent implements OnInit {
   // =========================
 
   toggleCompleted(course: Course): void {
-
-  course.completed = !course.completed;
-
-  if (course.completed) {
-
-    course.progress = 100;
-
+    course.completed = !course.completed;
+    if (course.completed) {
+      course.progress = 100;
+    }
+    this.courseService.updateCourse(course);
   }
-
-  this.courseService.updateCourse(course);
-
-}
 
 }

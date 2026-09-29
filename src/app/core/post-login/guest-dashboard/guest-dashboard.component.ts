@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AuthServiceService } from '../../services/auth.service';
+import { AttendanceService } from '../../services/attendance.service';
 import { HeaderComponent } from "../../../shared/header/header.component";
 
 @Component({
@@ -9,8 +11,15 @@ import { HeaderComponent } from "../../../shared/header/header.component";
   styleUrl: './guest-dashboard.component.scss'
 })
 export class GuestDashboardComponent {
+  private readonly user = inject(AuthServiceService).getUser();
+  readonly attendanceDays = this.user
+    ? inject(AttendanceService).getDays(this.user.userId)
+    : null;
+  readonly attendanceLabel = this.attendanceDays === null
+    ? 'Unavailable'
+    : `${this.attendanceDays} ${this.attendanceDays === 1 ? 'day' : 'days'}`;
     student = {
-    name: 'Jyotishree'
+    name: this.user?.userName || 'Student'
   };
 
   summaryCards = [
@@ -21,7 +30,7 @@ export class GuestDashboardComponent {
     },
     {
       title: 'Attendance',
-      value: '86%',
+      value: this.attendanceLabel,
       icon: '📊'
     },
     {

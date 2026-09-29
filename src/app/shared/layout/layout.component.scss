@@ -6,6 +6,6 @@
 .main-content {
   flex: 1;
   padding: 24px;
-  background: #f5f7fa;
+  background: var(--app-bg);
   overflow-x: hidden;
 }

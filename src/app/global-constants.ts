@@ -54,7 +54,7 @@ export const globalConstans = {
       isHidden: false,
       placeholder: 'Select State',
       type: 'select',
-      option: ['Pune', 'Nagpur', 'Mumbai'],
+      option: ['Maharastra', 'Karnataka', 'Goa'] ,
       validatorFun: [Validators.required],
     },
     {
@@ -65,7 +65,7 @@ export const globalConstans = {
       isHidden: false,
       placeholder: 'Select City',
       type: 'select',
-      option: ['Maharastra', 'Karnataka', 'Goa'],
+      option: ['Pune', 'Nagpur', 'Mumbai'],
       validatorFun: [Validators.required],
     },
     {

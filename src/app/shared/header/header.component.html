@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg bg-white shadow-sm">
+<nav class="navbar navbar-expand-lg app-surface shadow-sm">
 
   <div class="container-fluid px-4">
 
@@ -14,6 +14,23 @@
     <!-- Right side -->
     <div class="d-flex align-items-center gap-3">
 
+        <!-- Theme Toggle -->
+      <button
+        class="btn btn-outline-secondary btn-sm"
+        type="button"
+        (click)="toggleTheme()"
+        [attr.aria-label]="
+          themeService.currentTheme() === 'light'
+            ? 'Switch to dark mode'
+            : 'Switch to light mode'
+        "
+      >
+        @if (themeService.currentTheme() === 'light') {
+          Dark mode
+        } @else {
+          Light mode
+        }
+      </button>
       <!-- Username -->
       <div class="user-info">
 

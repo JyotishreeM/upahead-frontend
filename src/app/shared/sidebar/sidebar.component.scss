@@ -1,8 +1,8 @@
 .sidebar {
   width: 240px;
   min-width: 240px;
-  background: #ffffff;
-  border-right: 1px solid #e5e7eb;
+  background: var(--app-surface);
+  border-right: 1px solid var(--app-border);
   min-height: calc(100vh - 65px);
 }
 
@@ -19,7 +19,7 @@
   margin-bottom: 4px;
 
   text-decoration: none;
-  color: #4b5563;
+  color: var(--app-text);
 
   border-radius: 8px;
 
@@ -27,12 +27,12 @@
 }
 
 .menu-item:hover {
-  background: #f3f4f6;
+  background: var(--app-hover);
 }
 
 .menu-item.active {
-  background: #e8f0fe;
-  color: #2563eb;
+  background: var(--app-accent-bg);
+  color: var(--app-accent-text);
   font-weight: 600;
 }
 

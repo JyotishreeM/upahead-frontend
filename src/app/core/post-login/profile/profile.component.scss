@@ -19,12 +19,12 @@
   align-items: center;
   justify-content: center;
 
-  background: #e8f0fe;
+  background: var(--app-accent-bg);
 
   font-size: 36px;
   font-weight: 700;
 
-  color: #2563eb;
+  color: var(--app-accent-text);
 }
 
 .profile-label {
@@ -33,7 +33,7 @@
   font-size: 13px;
   font-weight: 600;
 
-  color: #6b7280;
+  color: var(--app-muted);
 
   margin-bottom: 6px;
 }
@@ -41,11 +41,11 @@
 .profile-value {
   padding: 10px 12px;
 
-  background: #f8fafc;
+  background: var(--app-hover);
 
   border-radius: 8px;
 
   min-height: 42px;
 
-  color: #374151;
+  color: var(--app-text);
 }

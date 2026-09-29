@@ -1,8 +1,9 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import{environment} from '../../../environments/environment';
+import { Observable, tap } from 'rxjs';
+import { AttendanceService } from './attendance.service';
+import { environment } from '../../../environments/environment';
 
 
 export interface RegisteredUser {
@@ -33,17 +34,24 @@ export class AuthServiceService {
 
   private readonly USER_KEY = 'registeredUser';
   private readonly TOKEN_KEY = 'accessToken';
- private readonly API_URL = `${environment.apiUrl}/api/auth`;
+  private readonly API_URL = `${environment.apiUrl}/api/auth`;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
-    private http: HttpClient
+    private http: HttpClient,
+    private attendance: AttendanceService
   ) { }
 
   login(email: string, password: string): Observable<LoginResponse> {
     const loginRequest: LoginRequest = { email, password };
 
-    return this.http.post<LoginResponse>(`${this.API_URL}/login`, loginRequest);
+    return this.http.post<LoginResponse>(`${this.API_URL}/login`, loginRequest).pipe(
+      tap(response => {
+        if (response.token && response.user) {
+          this.attendance.recordLogin(response.user.userId);
+        }
+      })
+    );
   }
 
   register(user: RegisteredUser): void {
@@ -95,39 +103,57 @@ export class AuthServiceService {
     );
   }
 
- logout(): void {
-  if (!isPlatformBrowser(this.platformId)) {
-    return;
-  }
+  logout(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
 
-  window.localStorage.removeItem(this.USER_KEY);
-  window.localStorage.removeItem(this.TOKEN_KEY);
-}
+    window.localStorage.removeItem(this.USER_KEY);
+    window.localStorage.removeItem(this.TOKEN_KEY);
+  }
 
   getToken(): string | null {
-  if (!isPlatformBrowser(this.platformId)) {
-    return null;
-  }
+    if (!isPlatformBrowser(this.platformId)) {
+      return null;
+    }
 
-  return window.localStorage.getItem(this.TOKEN_KEY);
-}
+    return window.localStorage.getItem(this.TOKEN_KEY);
+  }
 
   setToken(token: string): void {
-  if (!isPlatformBrowser(this.platformId)) {
-    return;
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    window.localStorage.setItem(this.TOKEN_KEY, token);
   }
 
-  window.localStorage.setItem(this.TOKEN_KEY, token);
-}
 
+  testProtectedApi() {
+    return this.http.get(
+      `${environment.apiUrl}/api/test/protected`,
+      {
+        responseType: 'text'
+      }
+    );
+  }
 
- testProtectedApi() {
-  return this.http.get(
-    `${environment.apiUrl}/api/test/protected`,
-    {
-      responseType: 'text'
+  isTokenExpired(): boolean {
+    const token = this.getToken();
+    if (!token) {
+      return true;
     }
-  );
-}
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+
+      if (!payload.exp) {
+        return true;
+      }
+      const expiryTime = payload.exp * 1000;
+      return Date.now() >= expiryTime;
+    } catch {
+      return true;
+    }
+  }
 
 }

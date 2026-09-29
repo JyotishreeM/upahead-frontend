@@ -1,1 +1,124 @@
-/* You can add global styles to this file, and also import other style files */
+
+/* LIGHT MODE */
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+
+  --app-bg: #f0f2f5;
+  --app-surface: #ffffff;
+  --app-text: #1c1e21;
+  --app-muted: #65676b;
+  --app-border: #dadde1;
+  --app-input-bg: #ffffff;
+  --app-hover: #e4e6e9;
+  --app-accent-bg: #e8f0fe; --app-accent-text: #2563eb; --app-accent-border: #dbe4ff;
+}
+
+/* DARK MODE */
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --app-bg: #18191a;
+  --app-surface: #242526;
+  --app-text: #e4e6eb;
+  --app-muted: #b0b3b8;
+  --app-border: #3e4042;
+  --app-input-bg: #3a3b3c;
+  --app-hover: #3a3b3c;
+  --app-accent-bg: #1e3154; --app-accent-text: #9ec5fe; --app-accent-border: #34568b;
+}
+
+/* PAGE */
+html,
+body {
+  min-height: 100%;
+  background: var(--app-bg);
+  color: var(--app-text);
+}
+
+body {
+  margin: 0;
+}
+
+/* ANGULAR ROOT */
+app-root {
+  display: block;
+  min-height: 100vh;
+  background: var(--app-bg);
+  color: var(--app-text);
+}
+
+/* COMMON LAYOUT */
+.navbar,
+.sidebar,
+.card,
+.modal-content,
+.dropdown-menu {
+  background-color: var(--app-surface);
+  color: var(--app-text);
+  border-color: var(--app-border);
+}
+
+.text-muted {
+  color: var(--app-muted) !important;
+}
+
+/* FORM CONTROLS */
+.form-control,
+.form-select {
+  background-color: var(--app-input-bg);
+  color: var(--app-text);
+  border-color: var(--app-border);
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--app-input-bg);
+  color: var(--app-text);
+}
+
+/* TABLES */
+.table {
+  --bs-table-bg: var(--app-surface);
+  --bs-table-color: var(--app-text);
+  --bs-table-border-color: var(--app-border);
+}
+
+/* LINKS */
+.navbar-brand,
+.nav-link {
+  color: var(--app-text);
+}
+
+/* SMOOTH TRANSITION */
+body,
+.navbar,
+.sidebar,
+.card,
+.modal-content,
+.form-control {
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* Theme-aware surfaces replace fixed Bootstrap background utilities. */
+.app-surface {
+  background-color: var(--app-surface);
+}
+
+.app-background {
+  background-color: var(--app-bg);
+}
+
+.form-control::placeholder {
+  color: var(--app-muted);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body, .navbar, .sidebar, .card, .modal-content, .form-control {
+    transition: none;
+  }
+}
