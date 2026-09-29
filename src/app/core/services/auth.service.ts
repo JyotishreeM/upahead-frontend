@@ -1,8 +1,7 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
-import { AttendanceService } from './attendance.service';
+import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 
@@ -15,6 +14,15 @@ export interface RegisteredUser {
   address: string;
   isActive: boolean;
   password?: string;
+}
+
+export interface RegistrationRequest {
+  userName: string;
+  emailId: string;
+  password: string;
+  state: string;
+  city: string;
+  address: string;
 }
 
 export interface LoginRequest {
@@ -39,18 +47,26 @@ export class AuthServiceService {
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     private http: HttpClient,
-    private attendance: AttendanceService
   ) { }
 
   login(email: string, password: string): Observable<LoginResponse> {
-    const loginRequest: LoginRequest = { email, password };
+    const loginRequest: LoginRequest = {
+      email,
+      password
+    };
 
-    return this.http.post<LoginResponse>(`${this.API_URL}/login`, loginRequest).pipe(
-      tap(response => {
-        if (response.token && response.user) {
-          this.attendance.recordLogin(response.user.userId);
-        }
-      })
+    return this.http.post<LoginResponse>(
+      `${this.API_URL}/login`,
+      loginRequest
+    );
+  }
+
+  registerUser(
+    user: RegistrationRequest
+  ): Observable<RegisteredUser> {
+    return this.http.post<RegisteredUser>(
+      `${this.API_URL}/register`,
+      user
     );
   }
 
@@ -86,22 +102,22 @@ export class AuthServiceService {
     }
   }
 
-  validateLogin(
-    email: string,
-    password: string
-  ): boolean {
+  // validateLogin(
+  //   email: string,
+  //   password: string
+  // ): boolean {
 
-    const user = this.getUser();
+  //   const user = this.getUser();
 
-    if (!user) {
-      return false;
-    }
+  //   if (!user) {
+  //     return false;
+  //   }
 
-    return (
-      user.emailId === email &&
-      user.password === password
-    );
-  }
+  //   return (
+  //     user.emailId === email &&
+  //     user.password === password
+  //   );
+  // }
 
   logout(): void {
     if (!isPlatformBrowser(this.platformId)) {

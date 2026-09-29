@@ -11,26 +11,27 @@ import { HeaderComponent } from "../../../shared/header/header.component";
   styleUrl: './guest-dashboard.component.scss'
 })
 export class GuestDashboardComponent {
-  private readonly user = inject(AuthServiceService).getUser();
-  readonly attendanceDays = this.user
-    ? inject(AttendanceService).getDays(this.user.userId)
-    : null;
-  readonly attendanceLabel = this.attendanceDays === null
-    ? 'Unavailable'
-    : `${this.attendanceDays} ${this.attendanceDays === 1 ? 'day' : 'days'}`;
-    student = {
+    private readonly authService = inject(AuthServiceService);
+  private readonly attendanceService = inject(AttendanceService);
+
+  private readonly user = this.authService.getUser();
+
+  student = {
     name: this.user?.userName || 'Student'
   };
+
+  attendanceLabel = 'Loading...';
+  todayPresent = false;
 
   summaryCards = [
     {
       title: 'My Courses',
       value: 5,
-      icon: '🎓',
+      icon: '🎓'
     },
     {
       title: 'Attendance',
-      value: this.attendanceLabel,
+      value: 'Loading...',
       icon: '📊'
     },
     {
@@ -83,5 +84,42 @@ export class GuestDashboardComponent {
       room: 'Room 204'
     }
   ];
+
+
+
+  ngOnInit(): void {
+    this.loadAttendance();
+  }
+
+ loadAttendance(): void {
+  this.attendanceService.getMyAttendance().subscribe({
+    next: (response) => {
+      this.todayPresent = response.todayPresent;
+
+      const days = response.totalAttendance;
+
+      this.attendanceLabel =
+        `${days} ${days === 1 ? 'day' : 'days'}`;
+
+      this.summaryCards = this.summaryCards.map(card =>
+        card.title === 'Attendance'
+          ? { ...card, value: this.attendanceLabel }
+          : card
+      );
+    },
+
+    error: (error) => {
+      console.error('Unable to load attendance:', error);
+
+      this.attendanceLabel = 'Unavailable';
+
+      this.summaryCards = this.summaryCards.map(card =>
+        card.title === 'Attendance'
+          ? { ...card, value: this.attendanceLabel }
+          : card
+      );
+    }
+  });
+}
 
 }
