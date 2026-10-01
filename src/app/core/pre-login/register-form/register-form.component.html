@@ -13,6 +13,9 @@
 
             <!-- Registration Form -->
             <form [formGroup]="customerForm" (ngSubmit)="onSave()">
+              @if (errorMessage) {
+                <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+              }
               <div class="row g-3">
                 @for (item of formFields; track item.name) {
                   @if (!item.isHidden) {

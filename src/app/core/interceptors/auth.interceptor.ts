@@ -10,7 +10,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const isApiRequest = requestPath.startsWith(`${apiBase}/`);
   const isPublicAuthRequest = [`${apiBase}/api/auth/login`, `${apiBase}/api/auth/register`]
     .includes(requestPath);
-  if (!isApiRequest || isPublicAuthRequest) {
+  const isPublicLocationRequest = req.method === 'GET' && (
+    requestPath === `${apiBase}/api/locations/states` ||
+    (requestPath.startsWith(`${apiBase}/api/locations/states/`) && requestPath.endsWith('/cities'))
+  );
+  if (!isApiRequest || isPublicAuthRequest || isPublicLocationRequest) {
     return next(req);
   }
     const authService = inject(AuthServiceService);

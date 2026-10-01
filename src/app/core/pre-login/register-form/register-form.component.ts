@@ -4,14 +4,15 @@ import { formConfig } from '../../../models/formModel';
 import { globalConstans } from '../../../global-constants';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
-import { AuthServiceService } from '../../services/auth.service';
+import { AuthServiceService, RegistrationRequest } from '../../services/auth.service';
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   LocationService,
   State,
   City
 } from '../../services/location.service';
 
-import { of } from 'rxjs';
+import { finalize, of } from 'rxjs';
 import { switchMap, catchError, distinctUntilChanged } from 'rxjs/operators';
 @Component({
   selector: 'app-register-form',
@@ -23,6 +24,7 @@ import { switchMap, catchError, distinctUntilChanged } from 'rxjs/operators';
 export class RegisterFormComponent implements OnInit {
   formFields: formConfig[] = globalConstans.customerFormConfig as formConfig[];
   isLoading: boolean = false;
+  errorMessage = '';
   customerForm !: FormGroup;
   formBuilder = inject(FormBuilder);
   private locationService = inject(LocationService);
@@ -34,7 +36,6 @@ export class RegisterFormComponent implements OnInit {
     private route: Router,
   ) {
     this.customerForm = this.initializeForm();
-    console.log(this.customerForm.value)
   }
 
 
@@ -142,16 +143,17 @@ export class RegisterFormComponent implements OnInit {
 
 
   onSave(): void {
+    if (this.isLoading) return;
+    this.errorMessage = '';
     if (this.customerForm.invalid) {
       this.customerForm.markAllAsTouched();
       return;
     }
-    if (this.isLoading) return;
     this.isLoading = true;
 
     const formValue = this.customerForm.getRawValue();
 
-    const userData = {
+    const userData: RegistrationRequest = {
       userName: formValue.userName.trim(),
       emailId: formValue.emailId.trim(),
       password: formValue.password,
@@ -160,18 +162,25 @@ export class RegisterFormComponent implements OnInit {
       address: formValue.address
     };
 
-    this.auth.registerUser(userData).subscribe({
-      next: (response) => {
-        this.isLoading = false;
-        console.log('Registration successful:', response.userId);
+    this.auth.registerUser(userData).pipe(
+      finalize(() => { this.isLoading = false; })
+    ).subscribe({
+      next: () => {
         this.route.navigate(['/login']);
       },
 
-      error: (error) => {
-        this.isLoading = false;
-        const errorMessage =
-          error.error?.error || 'Registration failed. Please try again.';
-        alert(errorMessage);
+      error: (error: HttpErrorResponse) => {
+        if (error.status === 0) {
+          this.errorMessage = 'Unable to connect to the server. Please try again later.';
+        } else if (error.status === 409) {
+          this.errorMessage = 'An account with this email already exists. Please sign in.';
+        } else if (error.status === 403) {
+          this.errorMessage = 'The server rejected registration. Please contact support.';
+        } else {
+          const message = error.error?.message || error.error?.error;
+          this.errorMessage = typeof message === 'string'
+            ? message : 'Registration failed. Please try again.';
+        }
       }
     });
   }
